@@ -1,1343 +1,516 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURAX FLOW — AI Compute on Qubic</title>
-<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>NEURAX FLOW — La Révolution du Calcul IA sur Qubic</title>
+<meta name="description" content="La première plateforme décentralisée de calcul IA sur Qubic. 40% moins cher qu'AWS. Transactions sans frais. Puissance de minage réelle.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f5f2ee;
-  --bg2: #edeae4;
-  --ink: #0f0e0c;
-  --ink2: #3a3830;
-  --muted: #9a9488;
-  --accent: #c8f03c;
-  --accent2: #1a1a2e;
-  --accent3: #ff5c35;
+  --bg: #f4f1ec;
+  --bg2: #eceae3;
+  --ink: #100f0d;
+  --ink2: #3d3b35;
+  --muted: #9b9488;
+  --accent: #d4f53c;
+  --accent2: #ff4d1c;
   --card: #ffffff;
-  --border: rgba(15,14,12,0.1);
-  --border2: rgba(15,14,12,0.06);
+  --border: rgba(16,15,13,0.09);
+  --dark: #100f0d;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; overflow-x: hidden; cursor: none; }
 
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: 'Outfit', sans-serif;
-  overflow-x: hidden;
-  cursor: none;
-}
+.cursor { width: 8px; height: 8px; background: var(--ink); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.12s, background 0.2s; mix-blend-mode: multiply; }
+.cursor.active { transform: scale(4); background: var(--accent); }
+.cursor-trail { width: 28px; height: 28px; border: 1px solid rgba(16,15,13,0.2); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.2s ease; }
 
-/* CURSOR */
-.cursor {
-  width: 10px; height: 10px;
-  background: var(--ink);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9999;
-  transition: transform 0.15s, background 0.2s;
-}
-.cursor-ring {
-  width: 32px; height: 32px;
-  border: 1.5px solid var(--ink);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9998;
-  transition: all 0.18s ease;
-  opacity: 0.3;
-}
-.cursor.hover { transform: scale(3); background: var(--accent); }
-.cursor-ring.hover { transform: scale(0); }
-
-/* NAV */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  padding: 0 48px;
-  height: 68px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(245,242,238,0.92);
-  backdrop-filter: blur(24px);
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-  color: var(--ink);
-  display: flex; align-items: center; gap: 10px;
-}
-
-.logo-icon {
-  width: 32px; height: 32px;
-  background: var(--ink);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.logo-icon::before {
-  content: '';
-  position: absolute;
-  width: 18px; height: 18px;
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  animation: spin 4s linear infinite;
-}
-
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  width: 6px; height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.logo-text { display: flex; flex-direction: column; line-height: 1; }
-.logo-main { font-size: 16px; letter-spacing: 2px; }
-.logo-sub { font-size: 8px; letter-spacing: 3px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-
-.nav-links { display: flex; gap: 40px; list-style: none; }
-.nav-links a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--muted);
-  text-decoration: none; letter-spacing: 1px;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--ink); }
-
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; background: rgba(244,241,236,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.logo { display: flex; align-items: center; gap: 12px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; }
+.logo-mark { width: 34px; height: 34px; background: var(--ink); border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.logo-mark::before { content: ''; position: absolute; width: 20px; height: 20px; border: 2.5px solid var(--accent); border-radius: 50%; animation: orbit 3s linear infinite; }
+.logo-mark::after { content: ''; position: absolute; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+.logo-info { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-name { font-size: 15px; letter-spacing: 1.5px; }
+.logo-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 2px; }
+.nav-center { display: flex; gap: 36px; list-style: none; }
+.nav-center a { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
+.nav-center a:hover { color: var(--ink); }
 .nav-right { display: flex; align-items: center; gap: 16px; }
+.live-badge { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 1.5px; }
+.live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pdot 2s infinite; }
+@keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.btn-launch { background: var(--ink); color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; padding: 10px 22px; border: none; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px; transition: all 0.2s; }
+.btn-launch:hover { background: var(--accent); color: var(--ink); }
 
-.nav-qubic {
-  display: flex; align-items: center; gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 1px;
-}
-.qubic-dot {
-  width: 6px; height: 6px;
-  background: #22c55e;
-  border-radius: 50%;
-  animation: blink 2s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero { min-height: 100vh; padding-top: 64px; display: grid; grid-template-rows: 1fr auto; position: relative; }
+.hero-body { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 64px - 104px); }
+.hero-left { padding: 80px 64px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border); }
 
-.btn-nav {
-  background: var(--ink);
-  color: var(--accent);
-  font-family: 'Clash Display', monospace;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 10px 24px;
-  border: none; cursor: pointer;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
-  transition: all 0.2s;
-}
-.btn-nav:hover { background: var(--accent); color: var(--ink); }
+.pioneer-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: var(--accent); padding: 8px 18px; border-radius: 100px; margin-bottom: 44px; width: fit-content; opacity: 0; animation: riseUp 0.6s 0.1s ease forwards; }
+.pioneer-badge span { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+.pioneer-num { background: var(--accent); color: var(--ink); font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 100px; }
+@keyframes riseUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-/* HERO */
-.hero {
-  min-height: 100vh;
-  padding: 68px 0 0;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  position: relative;
-  overflow: hidden;
-}
+h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(48px,5.5vw,76px); line-height: 0.95; letter-spacing: -3px; margin-bottom: 32px; opacity: 0; animation: riseUp 0.6s 0.2s ease forwards; }
+h1 .hl { display: inline-block; background: var(--ink); color: var(--accent); padding: 2px 10px; border-radius: 4px; }
+h1 .strike { position: relative; color: var(--muted); }
+h1 .strike::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: var(--accent2); transform: rotate(-2deg); }
 
-.hero-bg-text {
-  position: absolute;
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(120px, 18vw, 280px);
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(15,14,12,0.06);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: -8px;
-  user-select: none;
-}
+.hero-manifesto { font-size: 17px; font-weight: 300; color: var(--ink2); line-height: 1.75; max-width: 440px; margin-bottom: 48px; opacity: 0; animation: riseUp 0.6s 0.3s ease forwards; }
+.hero-manifesto strong { color: var(--ink); font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; opacity: 0; animation: riseUp 0.6s 0.4s ease forwards; }
 
-.hero-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  height: calc(100vh - 68px);
-}
+.btn-primary { background: var(--ink); color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; padding: 16px 36px; border: none; cursor: pointer; border-radius: 6px; transition: all 0.25s; }
+.btn-primary:hover { background: var(--accent); color: var(--ink); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,245,60,0.25); }
+.btn-secondary { background: transparent; color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; padding: 15px 36px; border: 1.5px solid var(--border); cursor: pointer; border-radius: 6px; transition: all 0.25s; }
+.btn-secondary:hover { border-color: var(--ink); }
 
-.hero-left {
-  padding: 80px 64px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid var(--border);
-  position: relative;
-}
+.hero-right { background: var(--dark); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 48px; }
+canvas#qnet { position: absolute; inset: 0; opacity: 0.55; }
+.power-panel { position: relative; z-index: 2; width: 100%; }
+.pp-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
+.pp-title::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+.power-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(52px,6vw,80px); letter-spacing: -4px; color: var(--accent); line-height: 1; display: block; }
+.power-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; margin-bottom: 36px; }
+.pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.06); margin-bottom: 28px; }
+.pcell { background: rgba(255,255,255,0.03); padding: 18px 16px; }
+.pcell-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -1px; color: white; margin-bottom: 4px; }
+.pcell-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
+.advs { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+.adv { display: flex; align-items: center; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.45); }
+.adv-ic { width: 28px; height: 28px; background: rgba(212,245,60,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.adv strong { color: rgba(255,255,255,0.82); font-weight: 500; }
 
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 40px;
-  opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
-}
+.hero-bottom { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); }
+.hb-cell { padding: 24px 40px; border-right: 1px solid var(--border); position: relative; overflow: hidden; }
+.hb-cell:last-child { border-right: none; }
+.hb-cell::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform 0.4s; }
+.hb-cell:hover::after { transform:scaleX(1); }
+.hb-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -1px; margin-bottom: 4px; }
+.hb-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
 
-h1 {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(52px, 6vw, 82px);
-  line-height: 0.95;
-  letter-spacing: -3px;
-  margin-bottom: 32px;
-  opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
-}
+.ticker-wrap { background: var(--ink); overflow: hidden; padding: 12px 0; }
+.ticker-track { display: flex; width: max-content; animation: scLeft 30s linear infinite; }
+.t-item { display: flex; align-items: center; gap: 10px; padding: 0 40px; border-right: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+.t-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 2px; text-transform: uppercase; }
+.t-val { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px; color: var(--accent); }
+.t-up { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #22c55e; }
+@keyframes scLeft { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-h1 em {
-  font-style: normal;
-  background: var(--ink);
-  color: var(--accent);
-  padding: 0 8px;
-  display: inline-block;
-}
+/* MANIFESTO */
+.manifesto-section { padding: 120px 48px; max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+.section-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent2); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+.section-tag::before { content: '// '; color: var(--muted); }
+h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px,4vw,50px); letter-spacing: -2px; line-height: 1.05; margin-bottom: 28px; }
+.manifesto-section p { font-size: 17px; font-weight: 300; color: var(--ink2); line-height: 1.8; margin-bottom: 16px; }
+.manifesto-section p strong { color: var(--ink); font-weight: 500; }
 
-.hero-desc {
-  font-size: 17px;
-  color: var(--ink2);
-  line-height: 1.7;
-  font-weight: 300;
-  max-width: 420px;
-  margin-bottom: 48px;
-  opacity: 0; animation: fadeUp 0.7s 0.3s forwards;
-}
+.comparison { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.comp-header { display: grid; grid-template-columns: 2fr 1fr 1fr; background: var(--ink); padding: 16px 24px; gap: 16px; }
+.comp-header span { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+.comp-header span:first-child { color: rgba(255,255,255,0.3); }
+.col-aws { color: rgba(255,255,255,0.4); text-align: center; }
+.col-neurax { color: var(--accent); text-align: center; }
+.comp-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 16px 24px; gap: 16px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+.comp-row:hover { background: rgba(212,245,60,0.03); }
+.comp-row:last-child { border-bottom: none; }
+.comp-feature { font-size: 14px; color: var(--ink2); font-weight: 300; }
+.comp-aws { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.comp-neurax { text-align: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+.badge-good { display:inline-block; background:rgba(34,197,94,0.1); color:#16a34a; border:1px solid rgba(34,197,94,0.2); font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 10px; border-radius:100px; }
+.badge-bad { display:inline-block; background:rgba(239,68,68,0.08); color:#dc2626; border:1px solid rgba(239,68,68,0.15); font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 10px; border-radius:100px; }
 
-.hero-actions {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
-}
+/* HOW */
+.how-section { background: var(--dark); color: white; padding: 120px 48px; }
+.how-inner { max-width: 1300px; margin: 0 auto; }
+.how-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+.how-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px,4vw,52px); letter-spacing: -2px; line-height: 1.0; margin-bottom: 64px; max-width: 600px; }
+.how-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(255,255,255,0.06); }
+.how-step { background: var(--dark); padding: 40px 32px; position: relative; overflow: hidden; transition: background 0.3s; }
+.how-step:hover { background: rgba(255,255,255,0.03); }
+.step-n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 56px; letter-spacing: -3px; color: rgba(255,255,255,0.04); position: absolute; top: 16px; right: 20px; line-height: 1; }
+.step-ic { font-size: 28px; margin-bottom: 20px; }
+.step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 12px; letter-spacing: -0.5px; }
+.step-desc { font-size: 14px; color: rgba(255,255,255,0.38); line-height: 1.7; font-weight: 300; }
+.step-acc { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+.how-step:hover .step-acc { transform: scaleX(1); }
 
-.btn-primary {
-  background: var(--ink);
-  color: var(--accent);
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 15px;
-  padding: 16px 36px; border: none; cursor: pointer;
-  border-radius: 4px; letter-spacing: 0.3px;
-  transition: all 0.25s;
-}
-.btn-primary:hover { background: var(--accent); color: var(--ink); transform: translateY(-2px); }
-
-.btn-outline {
-  background: transparent;
-  color: var(--ink);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500; font-size: 15px;
-  padding: 15px 36px;
-  border: 1.5px solid var(--border);
-  cursor: pointer; border-radius: 4px;
-  transition: all 0.25s; letter-spacing: 0.3px;
-}
-.btn-outline:hover { border-color: var(--ink); }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* HERO RIGHT — NEURAL ANIMATION */
-.hero-right {
-  position: relative;
-  overflow: hidden;
-  background: var(--ink);
-  display: flex; align-items: center; justify-content: center;
-}
-
-canvas#neural { position: absolute; inset: 0; }
-
-.hero-right-overlay {
-  position: relative; z-index: 2;
-  text-align: center;
-  pointer-events: none;
-}
-
-.hero-stat-big {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: 72px;
-  letter-spacing: -4px;
-  color: var(--accent);
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.hero-stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* HERO BOTTOM STATS */
-.hero-bottom {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--border);
-}
-
-.hero-stat {
-  padding: 28px 40px;
-  border-right: 1px solid var(--border);
-}
-.hero-stat:last-child { border-right: none; }
-
-.stat-val {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 28px;
-  letter-spacing: -1px; margin-bottom: 4px;
-}
-
-.stat-lbl {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 1px; text-transform: uppercase;
-}
-
-/* SECTION GENERIC */
-section { position: relative; }
-.container { max-width: 1300px; margin: 0 auto; padding: 0 48px; }
-
-.s-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 3px; text-transform: uppercase;
-  margin-bottom: 20px;
-  display: flex; align-items: center; gap: 12px;
-}
-.s-tag::after {
-  content: '';
-  flex: 1; height: 1px;
-  background: var(--border);
-}
-
-.s-title {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(36px, 4vw, 56px);
-  letter-spacing: -2px; line-height: 1.0;
-  margin-bottom: 20px;
-}
-
-.s-desc {
-  color: var(--ink2); font-size: 17px;
-  line-height: 1.7; font-weight: 300;
-  max-width: 480px;
-}
-
-/* HOW IT WORKS */
-.how-section {
-  padding: 120px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.how-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 100px; align-items: start;
-  margin-top: 64px;
-}
-
-.steps { display: flex; flex-direction: column; }
-
-.step {
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  gap: 24px;
-  padding: 32px 0;
-  border-bottom: 1px solid var(--border2);
-  transition: all 0.3s;
-  cursor: default;
-}
-.step:hover { padding-left: 8px; }
-.step:last-child { border-bottom: none; }
-
-.step-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--muted);
-  letter-spacing: 1px; padding-top: 4px;
-}
-
-.step-title {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 20px;
-  margin-bottom: 8px; letter-spacing: -0.5px;
-}
-
-.step-desc { color: var(--ink2); font-size: 14px; line-height: 1.6; font-weight: 300; }
-
-/* REVENUE CARD */
-.rev-panel {
-  background: var(--ink);
-  color: white;
-  padding: 48px;
-  border-radius: 8px;
-  position: sticky; top: 88px;
-}
-
-.rev-panel-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: rgba(255,255,255,0.3);
-  letter-spacing: 2px; margin-bottom: 32px;
-}
-
-.flow-visual {
-  display: flex; flex-direction: column; gap: 0;
-  margin-bottom: 40px;
-}
-
-.flow-node {
-  display: flex; align-items: center;
-  gap: 16px; padding: 18px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.flow-node:last-child { border-bottom: none; }
-
-.node-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.ni-buyer { background: rgba(99,102,241,0.2); }
-.ni-you { background: rgba(200,240,60,0.15); border: 1px solid rgba(200,240,60,0.3); }
-.ni-seller { background: rgba(34,197,94,0.15); }
-
-.node-info { flex: 1; }
-.node-name { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 2px; }
-.node-detail { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); }
-
-.node-amount {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 20px;
-  text-align: right;
-}
-.node-amount.you { color: var(--accent); }
-
-.flow-arrow-down {
-  text-align: left; padding: 4px 0 4px 20px;
-  color: rgba(255,255,255,0.2); font-size: 18px;
-}
-
-.rev-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 32px 0; }
-
-.rev-calc-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: rgba(255,255,255,0.3);
-  letter-spacing: 2px; margin-bottom: 20px;
-}
-
-.calc-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.calc-row:last-child { border-bottom: none; }
-
-.calc-label { font-size: 13px; color: rgba(255,255,255,0.5); }
-.calc-value {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 18px;
-  color: var(--accent);
-}
+/* PRICING */
+.pricing-section { padding: 120px 48px; max-width: 1300px; margin: 0 auto; }
+.pricing-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 64px; }
+.pricing-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.pricing-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px,3.5vw,44px); letter-spacing: -2px; line-height: 1.05; }
+.pricing-desc { font-size: 16px; color: var(--ink2); line-height: 1.7; font-weight: 300; }
+.pricing-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 36px; transition: all 0.25s; }
+.pricing-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,0.08); }
+.pricing-card.featured { background: var(--ink); color: white; border-color: var(--ink); }
+.pc-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; color: var(--muted); }
+.pricing-card.featured .pc-badge { color: var(--accent); }
+.pc-volume { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 20px; }
+.pricing-card.featured .pc-volume { color: white; }
+.pc-rate-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -3px; color: var(--ink); line-height: 1; }
+.pricing-card.featured .pc-rate-num { color: var(--accent); }
+.pc-rate-unit { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+.pricing-card.featured .pc-rate-unit { color: rgba(255,255,255,0.35); }
+.pc-conv { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); padding: 8px 0; border-top: 1px solid var(--border); margin-top: 16px; }
+.pricing-card.featured .pc-conv { color: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.06); }
+.pc-saving { display: inline-block; background: rgba(34,197,94,0.1); color: #16a34a; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 12px; border-radius: 100px; letter-spacing: 1px; margin-top: 12px; border: 1px solid rgba(34,197,94,0.2); }
 
 /* MARKETPLACE */
-.market-section {
-  padding: 120px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.market-toolbar {
-  display: flex; justify-content: space-between; align-items: center;
-  margin: 48px 0 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.market-count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--muted);
-  letter-spacing: 1px;
-}
-
+.market-section { padding: 80px 48px 120px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.market-inner { max-width: 1300px; margin: 0 auto; }
+.market-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.market-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+.market-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 32px; letter-spacing: -1.5px; }
 .filters { display: flex; gap: 8px; }
-.filter {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; padding: 8px 18px;
-  cursor: pointer; border-radius: 100px;
-  letter-spacing: 1px; transition: all 0.2s;
-}
-.filter.active, .filter:hover {
-  background: var(--ink); color: var(--accent);
-  border-color: var(--ink);
-}
-
-.nodes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.node-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 28px;
-  transition: all 0.25s; cursor: pointer;
-  position: relative; overflow: hidden;
-}
-.node-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  border-color: var(--ink);
-}
-
-.nc-top {
-  display: flex; justify-content: space-between;
-  align-items: flex-start; margin-bottom: 24px;
-}
-
-.nc-provider { display: flex; align-items: center; gap: 12px; }
-
-.nc-avatar {
-  width: 42px; height: 42px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 15px; color: white;
-  flex-shrink: 0;
-}
-.av1 { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
-.av2 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
-.av3 { background: linear-gradient(135deg, #10b981, #059669); }
-.av4 { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
-.av5 { background: linear-gradient(135deg, #ec4899, #f43f5e); }
-.av6 { background: linear-gradient(135deg, #84cc16, #22c55e); }
-
-.nc-name {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 15px; margin-bottom: 2px;
-}
-.nc-loc {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-}
-
-.nc-status {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; letter-spacing: 1px;
-  padding: 5px 12px; border-radius: 100px;
-}
-.online { background: rgba(34,197,94,0.1); color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
-.busy { background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.2); }
-
-.nc-specs {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; margin-bottom: 24px;
-}
-
-.nc-spec {}
-.spec-l {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: var(--muted);
-  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;
-}
-.spec-v {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 16px; letter-spacing: -0.3px;
-}
-
-.nc-footer {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 20px; border-top: 1px solid var(--border2);
-}
-
-.nc-price {}
-.price-v {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 22px;
-  letter-spacing: -1px; color: var(--ink);
-}
-.price-u {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: var(--muted); letter-spacing: 1px;
-}
-
-.rent-btn {
-  background: var(--ink); color: var(--accent);
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 13px;
-  padding: 10px 22px; border: none; cursor: pointer;
-  border-radius: 4px; transition: all 0.2s; letter-spacing: 0.3px;
-}
+.filter { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 7px 16px; cursor: pointer; border-radius: 100px; letter-spacing: 1px; transition: all 0.2s; text-transform: uppercase; }
+.filter.active, .filter:hover { background: var(--ink); color: var(--accent); border-color: var(--ink); }
+.nodes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.node-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; transition: all 0.25s; cursor: pointer; }
+.node-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.07); border-color: var(--ink); }
+.nc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.nc-prov { display: flex; align-items: center; gap: 10px; }
+.nc-av { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: white; flex-shrink: 0; }
+.av1{background:linear-gradient(135deg,#6366f1,#8b5cf6)} .av2{background:linear-gradient(135deg,#f59e0b,#ef4444)} .av3{background:linear-gradient(135deg,#10b981,#059669)} .av4{background:linear-gradient(135deg,#3b82f6,#06b6d4)} .av5{background:linear-gradient(135deg,#ec4899,#f43f5e)} .av6{background:linear-gradient(135deg,#84cc16,#22c55e)}
+.nc-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+.nc-loc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+.nc-status { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 1px; padding: 4px 10px; border-radius: 100px; text-transform: uppercase; }
+.online { background: rgba(34,197,94,0.08); color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
+.busy { background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.15); }
+.nc-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.spec-l { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.spec-v { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+.nc-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border); }
+.nc-price-val { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+.nc-price-unit { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 1px; }
+.rent-btn { background: var(--ink); color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; padding: 9px 20px; border: none; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
 .rent-btn:hover { background: var(--accent); color: var(--ink); }
-.rent-btn.disabled { opacity: 0.3; cursor: not-allowed; background: var(--muted); color: white; }
-
-/* REVENUE PHASES */
-.phases-section {
-  padding: 120px 0;
-  background: var(--ink); color: white;
-}
-
-.phases-header {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 80px; align-items: end; margin-bottom: 64px;
-}
-
-.phases-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 1px; background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.phase-card {
-  background: var(--ink);
-  padding: 40px 32px;
-  position: relative; overflow: hidden;
-  transition: background 0.3s;
-}
-.phase-card:hover { background: rgba(255,255,255,0.03); }
-
-.phase-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: rgba(255,255,255,0.25);
-  letter-spacing: 3px; text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.phase-time {
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px; color: rgba(255,255,255,0.4);
-  margin-bottom: 28px; font-weight: 300;
-}
-.phase-rev {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 30px;
-  letter-spacing: -1px; margin-bottom: 6px;
-  line-height: 1;
-}
-.phase-per {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: rgba(255,255,255,0.25);
-  letter-spacing: 2px;
-}
-
-.ph1 .phase-rev { color: rgba(255,255,255,0.3); }
-.ph2 .phase-rev { color: #60a5fa; }
-.ph3 .phase-rev { color: var(--accent); }
-.ph4 .phase-rev { color: #ffffff; }
-
-.phase-bar {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-}
-.ph1 .phase-bar { background: rgba(255,255,255,0.15); }
-.ph2 .phase-bar { background: #60a5fa; }
-.ph3 .phase-bar { background: var(--accent); }
-.ph4 .phase-bar { background: linear-gradient(90deg, var(--accent), white); }
+.rent-btn.off { opacity: 0.3; cursor: not-allowed; background: var(--muted); color: white; }
 
 /* CTA */
-.cta-section {
-  padding: 180px 0;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-}
-
-.cta-section h2 {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(48px, 6vw, 80px);
-  letter-spacing: -3px; line-height: 1.0;
-  margin-bottom: 28px;
-}
-
-.cta-section h2 span {
-  background: var(--ink);
-  color: var(--accent);
-  padding: 4px 12px;
-  display: inline-block;
-}
-
-.cta-desc {
-  color: var(--ink2); font-size: 18px;
-  line-height: 1.7; font-weight: 300;
-  max-width: 460px; margin: 0 auto 48px;
-}
-
+.cta-section { padding: 160px 48px; text-align: center; overflow: hidden; position: relative; }
+.cta-bg-word { position: absolute; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20vw; color: transparent; -webkit-text-stroke: 1px rgba(16,15,13,0.04); top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none; user-select: none; }
+.cta-inner { position: relative; max-width: 700px; margin: 0 auto; }
+.cta-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px; }
+.cta-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(40px,5.5vw,68px); letter-spacing: -3px; line-height: 0.95; margin-bottom: 28px; }
+.cta-title .chl { background: var(--ink); color: var(--accent); padding: 2px 12px; border-radius: 4px; display: inline-block; }
+.cta-sub { font-size: 18px; color: var(--ink2); font-weight: 300; line-height: 1.7; max-width: 480px; margin: 0 auto 48px; }
 .cta-btns { display: flex; gap: 12px; justify-content: center; }
 
-/* FOOTER */
-footer {
-  padding: 40px 48px;
-  display: flex; justify-content: space-between; align-items: center;
-  border-top: 1px solid var(--border);
-}
-
-.footer-logo {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 700; font-size: 18px;
-  letter-spacing: -0.5px;
-}
-
-.footer-links { display: flex; gap: 32px; list-style: none; }
-.footer-links a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  text-decoration: none; letter-spacing: 1px;
-  transition: color 0.2s;
-}
+footer { padding: 36px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
+.footer-links { display: flex; gap: 28px; list-style: none; }
+.footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
 .footer-links a:hover { color: var(--ink); }
+.footer-right { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
 
-.footer-qubic {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* LIVE TICKER */
-.ticker {
-  background: var(--ink); color: white;
-  padding: 14px 0; overflow: hidden;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.ticker-inner {
-  display: flex; gap: 0;
-  animation: scrollLeft 25s linear infinite;
-  width: max-content;
-}
-
-.t-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 0 40px; border-right: 1px solid rgba(255,255,255,0.08);
-  white-space: nowrap;
-}
-
-.t-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: rgba(255,255,255,0.3);
-  letter-spacing: 2px; text-transform: uppercase;
-}
-.t-val {
-  font-family: 'Clash Display', sans-serif;
-  font-weight: 600; font-size: 14px; color: var(--accent);
-}
-.t-change {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; color: #22c55e;
-}
-
-@keyframes scrollLeft {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-/* ACTIVITY */
-.activity {
-  position: fixed; bottom: 28px; left: 28px; z-index: 100;
-  display: flex; flex-direction: column; gap: 8px;
-  pointer-events: none;
-}
-
-.act-item {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  padding: 12px 18px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  animation: slideIn 0.4s ease, fadeAway 0.5s 4.5s ease forwards;
-  max-width: 300px; border-radius: 4px;
-}
+.activity { position: fixed; bottom: 24px; left: 24px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.act-item { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 10px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); box-shadow: 0 4px 16px rgba(0,0,0,0.06); animation: slideIn 0.35s ease, fadeOut 0.4s 4.6s ease forwards; max-width: 280px; }
 .act-item b { color: var(--ink); font-weight: 500; }
+.act-item .amt { color: #16a34a; }
+@keyframes slideIn { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
+@keyframes fadeOut { to{opacity:0} }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-16px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes fadeAway {
-  to { opacity: 0; transform: translateX(-8px); }
-}
-
-/* RESPONSIVE */
 @media (max-width: 1024px) {
   nav { padding: 0 24px; }
-  .nav-links { display: none; }
-  .hero-main { grid-template-columns: 1fr; }
+  .nav-center { display: none; }
+  .hero-body { grid-template-columns: 1fr; }
   .hero-right { display: none; }
   .hero-left { padding: 60px 24px; }
-  .hero-bottom { grid-template-columns: repeat(2, 1fr); }
-  .how-grid { grid-template-columns: 1fr; gap: 48px; }
+  .hero-bottom { grid-template-columns: repeat(2,1fr); }
+  .manifesto-section { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+  .how-grid { grid-template-columns: repeat(2,1fr); }
+  .how-section { padding: 80px 24px; }
+  .pricing-section { padding: 80px 24px; }
+  .pricing-header { grid-template-columns: 1fr; gap: 24px; }
+  .pricing-cards { grid-template-columns: 1fr; }
+  .market-section { padding: 60px 24px 80px; }
   .nodes-grid { grid-template-columns: 1fr; }
-  .phases-grid { grid-template-columns: repeat(2, 1fr); }
-  .phases-header { grid-template-columns: 1fr; gap: 32px; }
-  .container { padding: 0 24px; }
+  .market-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .cta-section { padding: 100px 24px; }
+  footer { flex-direction: column; gap: 24px; text-align: center; }
   .activity { display: none; }
-  footer { flex-direction: column; gap: 24px; }
 }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-trail" id="trail"></div>
 <div class="activity" id="activity"></div>
 
-<!-- NAV -->
 <nav>
   <div class="logo">
-    <div class="logo-icon"></div>
-    <div class="logo-text">
-      <span class="logo-main">NEURAX FLOW</span>
-      <span class="logo-sub">POWERED BY QUBIC</span>
+    <div class="logo-mark"></div>
+    <div class="logo-info">
+      <span class="logo-name">NEURAX FLOW</span>
+      <span class="logo-tag">PROPULSÉ PAR QUBIC</span>
     </div>
   </div>
-  <ul class="nav-links">
-    <li><a href="#marketplace">Marketplace</a></li>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#revenue">Revenue</a></li>
-    <li><a href="#providers">Providers</a></li>
+  <ul class="nav-center">
+    <li><a href="#marche">Marché</a></li>
+    <li><a href="#comment">Pourquoi Qubic</a></li>
+    <li><a href="#tarifs">Tarifs</a></li>
+    <li><a href="#fournisseurs">Fournisseurs</a></li>
   </ul>
   <div class="nav-right">
-    <div class="nav-qubic">
-      <div class="qubic-dot"></div>
-      QUBIC NETWORK LIVE
-    </div>
-    <button class="btn-nav">Launch App</button>
+    <div class="live-badge"><div class="live-dot"></div>RÉSEAU QUBIC EN DIRECT</div>
+    <button class="btn-launch">Accéder →</button>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg-text">NEURAX</div>
-  <div class="hero-main">
+  <div class="hero-body">
     <div class="hero-left">
-      <div class="hero-tag">
-        <span>⚡</span> Decentralized AI Compute — Feeless on Qubic
+      <div class="pioneer-badge">
+        <span>🚀 PREMIÈRE PLATEFORME IA SUR QUBIC</span>
+        <div class="pioneer-num">#1</div>
       </div>
       <h1>
-        AI POWER,<br>
-        <em>WITHOUT</em><br>
-        THE PRICE.
+        LA PUISSANCE IA<br>
+        <span class="hl">SANS</span><br>
+        <span class="strike">LES PRIX D'AWS</span>
       </h1>
-      <p class="hero-desc">
-        NEURAX FLOW connects AI developers with GPU providers on the Qubic blockchain. 
-        No fees. No middlemen. 40% cheaper than AWS. Instant settlement.
+      <p class="hero-manifesto">
+        Qubic révolutionne l'IA avec <strong>15,5 millions de transactions par seconde</strong>, une énergie de minage transformée en intelligence artificielle réelle, et des transactions <strong>totalement gratuites</strong>. NEURAX FLOW est la première marketplace à rendre cette puissance accessible à tous.
       </p>
       <div class="hero-actions">
-        <button class="btn-primary">Buy Compute →</button>
-        <button class="btn-outline">Sell GPU Power</button>
+        <button class="btn-primary">Acheter du Calcul →</button>
+        <button class="btn-secondary">Louer ma GPU</button>
       </div>
     </div>
+
     <div class="hero-right">
-      <canvas id="neural"></canvas>
-      <div class="hero-right-overlay">
-        <div class="hero-stat-big" id="liveNodes">1,247</div>
-        <div class="hero-stat-label">ACTIVE COMPUTE NODES</div>
+      <canvas id="qnet"></canvas>
+      <div class="power-panel">
+        <div class="pp-title">Réseau Qubic — Puissance Live</div>
+        <span class="power-num" id="nodeCount">1,247</span>
+        <div class="power-lbl">NŒUDS DE CALCUL ACTIFS</div>
+        <div class="pgrid">
+          <div class="pcell"><div class="pcell-val">15.5M</div><div class="pcell-lbl">TPS CertiK</div></div>
+          <div class="pcell"><div class="pcell-val">€0.00</div><div class="pcell-lbl">Frais transaction</div></div>
+          <div class="pcell"><div class="pcell-val">43%</div><div class="pcell-lbl">Économie vs AWS</div></div>
+          <div class="pcell"><div class="pcell-val">∞</div><div class="pcell-lbl">Finalité instantanée</div></div>
+        </div>
+        <div class="advs">
+          <div class="adv"><div class="adv-ic">⚡</div><div><strong>Useful Proof-of-Work</strong> — L'énergie de minage entraîne l'IA Aigarth</div></div>
+          <div class="adv"><div class="adv-ic">🔒</div><div><strong>Escrow décentralisé</strong> — Paiement sécurisé sans intermédiaire</div></div>
+          <div class="adv"><div class="adv-ic">🌍</div><div><strong>USDT → QUBIC</strong> — Payez en stable coin, settlement instantané</div></div>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="hero-bottom">
-    <div class="hero-stat">
-      <div class="stat-val">15.5M</div>
-      <div class="stat-lbl">TPS on Qubic</div>
-    </div>
-    <div class="hero-stat">
-      <div class="stat-val">€0</div>
-      <div class="stat-lbl">Transaction fees</div>
-    </div>
-    <div class="hero-stat">
-      <div class="stat-val" id="txLive">2,891</div>
-      <div class="stat-lbl">Transactions today</div>
-    </div>
-    <div class="hero-stat">
-      <div class="stat-val">43%</div>
-      <div class="stat-lbl">Cheaper vs AWS</div>
-    </div>
+    <div class="hb-cell"><div class="hb-val" id="txToday">2,891</div><div class="hb-lbl">Transactions aujourd'hui</div></div>
+    <div class="hb-cell"><div class="hb-val">48,391h</div><div class="hb-lbl">GPU·heures vendues</div></div>
+    <div class="hb-cell"><div class="hb-val">€0</div><div class="hb-lbl">Frais blockchain</div></div>
+    <div class="hb-cell"><div class="hb-val">Avr 2026</div><div class="hb-lbl">Date de lancement</div></div>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner">
-    <div class="t-item"><span class="t-label">QUBIC PRICE</span><span class="t-val">$0.0000008</span><span class="t-change">↑ +4.2%</span></div>
-    <div class="t-item"><span class="t-label">GPU HOURS SOLD</span><span class="t-val">48,391</span><span class="t-change">↑ +234</span></div>
-    <div class="t-item"><span class="t-label">PROVIDERS ONLINE</span><span class="t-val">1,247</span><span class="t-change">↑ +12</span></div>
-    <div class="t-item"><span class="t-label">PLATFORM COMMISSION</span><span class="t-val">6–12%</span><span class="t-change">per tx</span></div>
-    <div class="t-item"><span class="t-label">AVG SAVINGS VS AWS</span><span class="t-val">43%</span><span class="t-change">↑ cheaper</span></div>
-    <div class="t-item"><span class="t-label">NETWORK STATUS</span><span class="t-val">HEALTHY</span><span class="t-change">● LIVE</span></div>
-    <div class="t-item"><span class="t-label">QUBIC PRICE</span><span class="t-val">$0.0000008</span><span class="t-change">↑ +4.2%</span></div>
-    <div class="t-item"><span class="t-label">GPU HOURS SOLD</span><span class="t-val">48,391</span><span class="t-change">↑ +234</span></div>
-    <div class="t-item"><span class="t-label">PROVIDERS ONLINE</span><span class="t-val">1,247</span><span class="t-change">↑ +12</span></div>
-    <div class="t-item"><span class="t-label">PLATFORM COMMISSION</span><span class="t-val">6–12%</span><span class="t-change">per tx</span></div>
-    <div class="t-item"><span class="t-label">AVG SAVINGS VS AWS</span><span class="t-val">43%</span><span class="t-change">↑ cheaper</span></div>
-    <div class="t-item"><span class="t-label">NETWORK STATUS</span><span class="t-val">HEALTHY</span><span class="t-change">● LIVE</span></div>
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="t-item"><span class="t-label">QUBIC PRIX</span><span class="t-val">$0.0000008</span><span class="t-up">↑ +4.2%</span></div>
+    <div class="t-item"><span class="t-label">NŒUDS EN LIGNE</span><span class="t-val">1,247</span><span class="t-up">↑ +12</span></div>
+    <div class="t-item"><span class="t-label">TPS CERTIFIÉ</span><span class="t-val">15.5M</span><span class="t-up">● LIVE</span></div>
+    <div class="t-item"><span class="t-label">ÉCONOMIE VS AWS</span><span class="t-val">43%</span><span class="t-up">↑ moins cher</span></div>
+    <div class="t-item"><span class="t-label">FRAIS BLOCKCHAIN</span><span class="t-val">€0.00</span><span class="t-up">✓ GRATUIT</span></div>
+    <div class="t-item"><span class="t-label">PLATEFORME</span><span class="t-val">N°1 SUR QUBIC</span><span class="t-up">PIONEER</span></div>
+    <div class="t-item"><span class="t-label">QUBIC PRIX</span><span class="t-val">$0.0000008</span><span class="t-up">↑ +4.2%</span></div>
+    <div class="t-item"><span class="t-label">NŒUDS EN LIGNE</span><span class="t-val">1,247</span><span class="t-up">↑ +12</span></div>
+    <div class="t-item"><span class="t-label">TPS CERTIFIÉ</span><span class="t-val">15.5M</span><span class="t-up">● LIVE</span></div>
+    <div class="t-item"><span class="t-label">ÉCONOMIE VS AWS</span><span class="t-val">43%</span><span class="t-up">↑ moins cher</span></div>
+    <div class="t-item"><span class="t-label">FRAIS BLOCKCHAIN</span><span class="t-val">€0.00</span><span class="t-up">✓ GRATUIT</span></div>
+    <div class="t-item"><span class="t-label">PLATEFORME</span><span class="t-val">N°1 SUR QUBIC</span><span class="t-up">PIONEER</span></div>
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <div class="container">
-    <div class="s-tag">HOW IT WORKS</div>
-    <div class="how-grid">
-      <div>
-        <h2 class="s-title">Simple engine.<br>Serious money.</h2>
-        <p class="s-desc" style="margin-bottom:0">NEURAX FLOW takes a tiered commission — 12% standard, 9% growth, 6% enterprise — plus a transparent 2.5% USDT→QUBIC conversion fee. No inventory. No servers. Just the marketplace.</p>
-        <div class="steps">
-          <div class="step">
-            <div class="step-num">01</div>
-            <div>
-              <div class="step-title">Provider lists GPU</div>
-              <div class="step-desc">Anyone with a powerful GPU registers on NEURAX FLOW, sets their price per hour, and goes live on the Qubic network instantly.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <div>
-              <div class="step-title">Buyer selects & pays</div>
-              <div class="step-desc">AI developers browse available nodes, compare specs and pricing, then pay in QUBIC tokens. Feeless, instant, final.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <div>
-              <div class="step-title">NEURAX FLOW earns 6–12% + 2.5%</div>
-              <div class="step-desc">Tiered commission: 12% under $500, 9% from $500–$2,500, 6% above $2,500. Plus a transparent 2.5% USDT→QUBIC conversion fee. No invoices. No delays. Pure passive flow.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">04</div>
-            <div>
-              <div class="step-title">Network effect kicks in</div>
-              <div class="step-desc">More providers attract more buyers. More buyers attract more providers. The marketplace grows itself.</div>
-            </div>
-          </div>
-        </div>
+<section id="comment">
+  <div class="manifesto-section">
+    <div>
+      <div class="section-tag">POURQUOI NEURAX FLOW</div>
+      <h2>Qubic fait ce qu'AWS ne fera jamais.</h2>
+      <p><strong>Amazon, Google Cloud, Azure</strong> — ces géants centralisés contrôlent 70% du marché du calcul IA mondial. Leurs prix sont opaques, leurs serveurs gaspillent des gigawatts, et vos données leur appartiennent.</p>
+      <p>Qubic a inventé le <strong>Useful Proof-of-Work</strong> : au lieu de gaspiller de l'énergie, les mineurs entraînent directement l'IA Aigarth. Chaque transaction est gratuite et finale en millisecondes.</p>
+      <p><strong>NEURAX FLOW est la première marketplace</strong> à connecter cette puissance aux développeurs IA qui paient encore trop cher pour du calcul centralisé.</p>
+    </div>
+    <div class="comparison">
+      <div class="comp-header">
+        <span>Critère</span>
+        <span class="col-aws">AWS / GCP</span>
+        <span class="col-neurax">NEURAX FLOW</span>
       </div>
-
-      <div class="rev-panel">
-        <div class="rev-panel-tag">// REVENUE FLOW — LIVE EXAMPLE</div>
-
-        <div class="flow-visual">
-          <div class="flow-node">
-            <div class="node-icon ni-buyer">🏢</div>
-            <div class="node-info">
-              <div class="node-name">AI Company</div>
-              <div class="node-detail">buys 10h of H100 compute</div>
-            </div>
-            <div class="node-amount">€180</div>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <div class="node-icon ni-you">⚡</div>
-            <div class="node-info">
-              <div class="node-name" style="color:var(--accent)">NEURAX FLOW</div>
-              <div class="node-detail" style="color:rgba(255,255,255,0.3)">12% commission + 2.5% conversion — automatic</div>
-            </div>
-            <div class="node-amount you">€9</div>
-          </div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="flow-node">
-            <div class="node-icon ni-seller">💻</div>
-            <div class="node-info">
-              <div class="node-name">GPU Provider</div>
-              <div class="node-detail">receives payment in QUBIC</div>
-            </div>
-            <div class="node-amount">€171</div>
-          </div>
-        </div>
-
-        <div class="rev-divider"></div>
-        <div class="rev-calc-title">// IF YOU REACH...</div>
-
-        <div class="calc-row">
-          <span class="calc-label">500 transactions / month</span>
-          <span class="calc-value">€450/mo</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">2,000 transactions / month</span>
-          <span class="calc-value">€1,800/mo</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">10,000 transactions / month</span>
-          <span class="calc-value">€9,000/mo</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">50,000 transactions / month</span>
-          <span class="calc-value">€45,000/mo</span>
-        </div>
-      </div>
+      <div class="comp-row"><div class="comp-feature">Frais de transaction</div><div class="comp-aws"><span class="badge-bad">$0.01–0.05</span></div><div class="comp-neurax"><span class="badge-good">€0.00</span></div></div>
+      <div class="comp-row"><div class="comp-feature">Vitesse de finalité</div><div class="comp-aws"><span class="badge-bad">2–5 sec</span></div><div class="comp-neurax"><span class="badge-good">Instantané</span></div></div>
+      <div class="comp-row"><div class="comp-feature">Prix H100 / heure</div><div class="comp-aws"><span class="badge-bad">$3.20+</span></div><div class="comp-neurax"><span class="badge-good">~$1.80</span></div></div>
+      <div class="comp-row"><div class="comp-feature">Engagement minimum</div><div class="comp-aws"><span class="badge-bad">1 an</span></div><div class="comp-neurax"><span class="badge-good">1 heure</span></div></div>
+      <div class="comp-row"><div class="comp-feature">Propriété des données</div><div class="comp-aws"><span class="badge-bad">Leurs serveurs</span></div><div class="comp-neurax"><span class="badge-good">Décentralisé</span></div></div>
+      <div class="comp-row"><div class="comp-feature">Énergie utilisée</div><div class="comp-aws"><span class="badge-bad">Gaspillée</span></div><div class="comp-neurax"><span class="badge-good">Entraîne l'IA</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- MARKETPLACE -->
-<section class="market-section" id="marketplace">
-  <div class="container">
-    <div class="s-tag">LIVE MARKETPLACE</div>
-    <h2 class="s-title">Available<br>compute nodes.</h2>
+<section class="how-section">
+  <div class="how-inner">
+    <div class="how-tag">// COMMENT ÇA MARCHE</div>
+    <h2 class="how-title">Simple comme Airbnb.<br>Puissant comme AWS.</h2>
+    <div class="how-grid">
+      <div class="how-step"><div class="step-n">01</div><div class="step-ic">💻</div><div class="step-title">Le fournisseur liste sa GPU</div><div class="step-desc">Toute personne avec une GPU puissante s'inscrit, fixe son prix horaire et est visible instantanément sur le réseau Qubic mondial.</div><div class="step-acc"></div></div>
+      <div class="how-step"><div class="step-n">02</div><div class="step-ic">🏢</div><div class="step-title">L'acheteur choisit et paie</div><div class="step-desc">Les développeurs IA comparent specs et prix, puis paient en USDT. Le système convertit automatiquement en QUBIC au meilleur taux affiché.</div><div class="step-acc"></div></div>
+      <div class="how-step"><div class="step-n">03</div><div class="step-ic">🔒</div><div class="step-title">L'escrow sécurise</div><div class="step-desc">Le smart contract Qubic verrouille les fonds pendant l'exécution. À la fin du job, le paiement se libère automatiquement — aucun risque possible.</div><div class="step-acc"></div></div>
+      <div class="how-step"><div class="step-n">04</div><div class="step-ic">⚡</div><div class="step-title">15.5M TPS — 0 frais</div><div class="step-desc">La blockchain Qubic finalise la transaction en millisecondes. Le fournisseur reçoit ses QUBIC, la plateforme encaisse sa commission transparente.</div><div class="step-acc"></div></div>
+    </div>
+  </div>
+</section>
 
-    <div class="market-toolbar">
-      <div class="market-count" id="nodeCount">Showing 6 of 1,247 nodes online</div>
+<section class="pricing-section" id="tarifs">
+  <div class="pricing-header">
+    <div>
+      <div class="pricing-tag">// TARIFICATION TRANSPARENTE</div>
+      <h2 class="pricing-title">Des frais clairs.<br>Affichés avant chaque transaction.</h2>
+    </div>
+    <p class="pricing-desc">Rien de caché. Le détail complet de chaque transaction est affiché avant confirmation. Plus vous achetez de calcul, moins vous payez de commission.</p>
+  </div>
+  <div class="pricing-cards">
+    <div class="pricing-card">
+      <div class="pc-badge">STANDARD</div>
+      <div class="pc-volume">Jusqu'à $500 / transaction</div>
+      <div><span class="pc-rate-num">12</span><span class="pc-rate-unit">% commission</span></div>
+      <div class="pc-conv">+ 2.5% frais conversion USDT → QUBIC</div>
+      <div class="pc-saving">40% moins cher qu'AWS inclus</div>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pc-badge">⭐ CROISSANCE</div>
+      <div class="pc-volume">$500 – $2,500 / transaction</div>
+      <div><span class="pc-rate-num">9</span><span class="pc-rate-unit">% commission</span></div>
+      <div class="pc-conv">+ 2.5% frais conversion USDT → QUBIC</div>
+      <div class="pc-saving" style="background:rgba(212,245,60,0.12);color:var(--accent);border-color:rgba(212,245,60,0.25)">Le plus populaire</div>
+    </div>
+    <div class="pricing-card">
+      <div class="pc-badge">ENTREPRISE</div>
+      <div class="pc-volume">Au-delà de $2,500 / transaction</div>
+      <div><span class="pc-rate-num">6</span><span class="pc-rate-unit">% commission</span></div>
+      <div class="pc-conv">+ 2.5% frais conversion USDT → QUBIC</div>
+      <div class="pc-saving">Idéal pour les studios IA</div>
+    </div>
+  </div>
+</section>
+
+<section class="market-section" id="marche">
+  <div class="market-inner">
+    <div class="market-header">
+      <div>
+        <div class="market-tag">// MARKETPLACE EN DIRECT</div>
+        <div class="market-title">Nœuds de calcul disponibles.</div>
+      </div>
       <div class="filters">
-        <button class="filter active">ALL</button>
+        <button class="filter active">TOUS</button>
         <button class="filter">RTX 40XX</button>
         <button class="filter">H100</button>
         <button class="filter">A100</button>
         <button class="filter">BUDGET</button>
       </div>
     </div>
-
     <div class="nodes-grid">
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av1">NK</div>
-            <div>
-              <div class="nc-name">NexaKernel</div>
-              <div class="nc-loc">🇸🇬 Singapore · 12ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status online">● ONLINE</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">RTX 4090</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">24 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">64 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">99.8%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€0.38</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn">RENT NOW</button>
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av2">VX</div>
-            <div>
-              <div class="nc-name">VortexLabs</div>
-              <div class="nc-loc">🇩🇪 Frankfurt · 4ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status online">● ONLINE</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">H100 SXM</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">80 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">256 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">99.9%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€1.80</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn">RENT NOW</button>
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av3">QN</div>
-            <div>
-              <div class="nc-name">QuantumNode</div>
-              <div class="nc-loc">🇺🇸 Dallas · 28ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status busy">● BUSY</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">A100 PCIe</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">40 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">128 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">98.4%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€0.95</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn disabled">IN USE</button>
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av4">DX</div>
-            <div>
-              <div class="nc-name">DataxCore</div>
-              <div class="nc-loc">🇦🇪 Dubai · 8ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status online">● ONLINE</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">RTX 4080</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">16 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">32 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">97.1%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€0.22</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn">RENT NOW</button>
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av5">OC</div>
-            <div>
-              <div class="nc-name">OmniCompute</div>
-              <div class="nc-loc">🇯🇵 Tokyo · 2ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status online">● ONLINE</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">A6000</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">48 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">96 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">99.5%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€0.65</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn">RENT NOW</button>
-        </div>
-      </div>
-
-      <div class="node-card">
-        <div class="nc-top">
-          <div class="nc-provider">
-            <div class="nc-avatar av6">SN</div>
-            <div>
-              <div class="nc-name">SynapseNet</div>
-              <div class="nc-loc">🇬🇧 London · 6ms latency</div>
-            </div>
-          </div>
-          <span class="nc-status online">● ONLINE</span>
-        </div>
-        <div class="nc-specs">
-          <div class="nc-spec"><div class="spec-l">GPU</div><div class="spec-v">H100 NVL</div></div>
-          <div class="nc-spec"><div class="spec-l">VRAM</div><div class="spec-v">94 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">RAM</div><div class="spec-v">512 GB</div></div>
-          <div class="nc-spec"><div class="spec-l">Uptime</div><div class="spec-v">99.99%</div></div>
-        </div>
-        <div class="nc-footer">
-          <div class="nc-price"><div class="price-v">€2.10</div><div class="price-u">/ GPU·HOUR</div></div>
-          <button class="rent-btn">RENT NOW</button>
-        </div>
-      </div>
-
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av1">NK</div><div><div class="nc-name">NexaKernel</div><div class="nc-loc">🇸🇬 Singapour · 12ms</div></div></div><span class="nc-status online">● EN LIGNE</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">RTX 4090</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">24 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">64 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">99.8%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€0.38</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn">LOUER</button></div></div>
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av2">VX</div><div><div class="nc-name">VortexLabs</div><div class="nc-loc">🇩🇪 Francfort · 4ms</div></div></div><span class="nc-status online">● EN LIGNE</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">H100 SXM</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">80 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">256 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">99.9%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€1.80</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn">LOUER</button></div></div>
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av3">QN</div><div><div class="nc-name">QuantumNode</div><div class="nc-loc">🇺🇸 Dallas · 28ms</div></div></div><span class="nc-status busy">● OCCUPÉ</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">A100 PCIe</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">40 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">128 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">98.4%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€0.95</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn off">EN COURS</button></div></div>
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av4">DX</div><div><div class="nc-name">DataxCore</div><div class="nc-loc">🇦🇪 Dubaï · 8ms</div></div></div><span class="nc-status online">● EN LIGNE</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">RTX 4080</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">16 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">32 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">97.1%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€0.22</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn">LOUER</button></div></div>
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av5">OC</div><div><div class="nc-name">OmniCompute</div><div class="nc-loc">🇯🇵 Tokyo · 2ms</div></div></div><span class="nc-status online">● EN LIGNE</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">A6000</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">48 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">96 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">99.5%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€0.65</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn">LOUER</button></div></div>
+      <div class="node-card"><div class="nc-top"><div class="nc-prov"><div class="nc-av av6">SN</div><div><div class="nc-name">SynapseNet</div><div class="nc-loc">🇬🇧 Londres · 6ms</div></div></div><span class="nc-status online">● EN LIGNE</span></div><div class="nc-specs"><div><div class="spec-l">GPU</div><div class="spec-v">H100 NVL</div></div><div><div class="spec-l">VRAM</div><div class="spec-v">94 GB</div></div><div><div class="spec-l">RAM</div><div class="spec-v">512 GB</div></div><div><div class="spec-l">Uptime</div><div class="spec-v">99.99%</div></div></div><div class="nc-footer"><div><div class="nc-price-val">€2.10</div><div class="nc-price-unit">/ GPU·HEURE</div></div><button class="rent-btn">LOUER</button></div></div>
     </div>
   </div>
 </section>
 
-<!-- REVENUE PHASES -->
-<section class="phases-section" id="revenue">
-  <div class="container">
-    <div class="phases-header">
-      <div>
-        <div class="s-tag" style="color:rgba(255,255,255,0.3)">REVENUE PROJECTIONS</div>
-        <h2 class="s-title" style="color:white">Your earnings<br>over time.</h2>
-      </div>
-      <p class="s-desc" style="color:rgba(255,255,255,0.4)">Based on tiered commissions (6–12%) + 2.5% conversion fee, with realistic organic growth of providers and buyers month over month.</p>
-    </div>
-
-    <div class="phases-grid">
-      <div class="phase-card ph1">
-        <div class="phase-num">PHASE 01</div>
-        <div class="phase-time">Months 1 – 3 · Build & test</div>
-        <div class="phase-rev">€0 – 500</div>
-        <div class="phase-per">/ MONTH</div>
-        <div class="phase-bar"></div>
-      </div>
-      <div class="phase-card ph2">
-        <div class="phase-num">PHASE 02</div>
-        <div class="phase-time">Months 4 – 8 · First traction</div>
-        <div class="phase-rev">€500 – 5K</div>
-        <div class="phase-per">/ MONTH</div>
-        <div class="phase-bar"></div>
-      </div>
-      <div class="phase-card ph3">
-        <div class="phase-num">PHASE 03</div>
-        <div class="phase-time">Months 9 – 18 · Growth</div>
-        <div class="phase-rev">€5K – 30K</div>
-        <div class="phase-per">/ MONTH</div>
-        <div class="phase-bar"></div>
-      </div>
-      <div class="phase-card ph4">
-        <div class="phase-num">PHASE 04</div>
-        <div class="phase-time">18 months+ · Scale</div>
-        <div class="phase-rev">€30K+</div>
-        <div class="phase-per">/ MONTH</div>
-        <div class="phase-bar"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
 <section class="cta-section">
-  <div class="container">
-    <h2>Ready to <span>launch</span><br>NEURAX FLOW?</h2>
-    <p class="cta-desc">Join the decentralized AI compute revolution. Zero transaction fees. Global reach. Instant QUBIC settlement.</p>
+  <div class="cta-bg-word">QUBIC</div>
+  <div class="cta-inner">
+    <div class="cta-eyebrow">// REJOIGNEZ LES PIONNIERS</div>
+    <h2 class="cta-title">Soyez parmi<br>les <span class="chl">premiers</span>.</h2>
+    <p class="cta-sub">La révolution du calcul IA décentralisé commence maintenant. Chaque jour qui passe, c'est un concurrent potentiel qui s'installe. La fenêtre pionnier ne dure pas éternellement.</p>
     <div class="cta-btns">
-      <button class="btn-primary">Start Buying Compute →</button>
-      <button class="btn-outline">List Your GPU</button>
+      <button class="btn-primary">Acheter du Calcul →</button>
+      <button class="btn-secondary">Devenir Fournisseur</button>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">NEURAX FLOW</div>
   <ul class="footer-links">
     <li><a href="#">Docs</a></li>
     <li><a href="#">API</a></li>
     <li><a href="#">Discord</a></li>
-    <li><a href="#">X / Twitter</a></li>
-    <li><a href="#">Terms</a></li>
+    <li><a href="#">Twitter/X</a></li>
+    <li><a href="#">Mentions légales</a></li>
   </ul>
-  <div class="footer-qubic">
-    <div class="qubic-dot"></div>
-    POWERED BY QUBIC BLOCKCHAIN
-  </div>
+  <div class="footer-right"><div class="live-dot"></div>PROPULSÉ PAR QUBIC BLOCKCHAIN</div>
 </footer>
 
 <script>
-// CURSOR
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e => {
-  mx=e.clientX; my=e.clientY;
-  cur.style.left=(mx-5)+'px'; cur.style.top=(my-5)+'px';
-});
-function animRing(){
-  rx+=(mx-rx-16)*0.12; ry+=(my-ry-16)*0.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-document.querySelectorAll('button,a,.node-card,.step').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.classList.add('hover');ring.classList.add('hover');});
-  el.addEventListener('mouseleave',()=>{cur.classList.remove('hover');ring.classList.remove('hover');});
+const cur = document.getElementById('cur');
+const trail = document.getElementById('trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=(mx-4)+'px';cur.style.top=(my-4)+'px';});
+function animT(){tx+=(mx-tx-14)*0.12;ty+=(my-ty-14)*0.12;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animT);}
+animT();
+document.querySelectorAll('button,a,.node-card,.how-step,.pricing-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('active'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('active'));
 });
 
-// FILTERS
 document.querySelectorAll('.filter').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-  });
+  b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
 });
 
-// NEURAL CANVAS
-const canvas = document.getElementById('neural');
+const canvas=document.getElementById('qnet');
 if(canvas){
-  const ctx = canvas.getContext('2d');
+  const ctx=canvas.getContext('2d');
   let W,H,nodes=[];
-  function resize(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
-  resize();
-  window.addEventListener('resize',resize);
-
-  class Node {
-    constructor(){
-      this.x=Math.random()*W; this.y=Math.random()*H;
-      this.vx=(Math.random()-0.5)*0.4; this.vy=(Math.random()-0.5)*0.4;
-      this.r=Math.random()*2+1;
-    }
-    update(){ this.x+=this.vx; this.y+=this.vy;
-      if(this.x<0||this.x>W)this.vx*=-1;
-      if(this.y<0||this.y>H)this.vy*=-1;
-    }
-  }
-
-  for(let i=0;i<80;i++) nodes.push(new Node());
-
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  class Node{constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-0.5)*0.5;this.vy=(Math.random()-0.5)*0.5;this.r=Math.random()*2.5+0.5;this.p=Math.random()*Math.PI*2;}
+  update(){this.x+=this.vx;this.y+=this.vy;this.p+=0.02;if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;}}
+  for(let i=0;i<90;i++)nodes.push(new Node());
   function draw(){
     ctx.clearRect(0,0,W,H);
     nodes.forEach(n=>n.update());
-
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        const dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<120){
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.strokeStyle=`rgba(200,240,60,${(1-dist/120)*0.3})`;
-          ctx.lineWidth=0.5;
-          ctx.stroke();
-        }
-      }
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<130){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.strokeStyle=`rgba(212,245,60,${(1-d/130)*0.25})`;ctx.lineWidth=0.6;ctx.stroke();}
     }
-
-    nodes.forEach(n=>{
-      ctx.beginPath();
-      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(200,240,60,0.7)';
-      ctx.fill();
-    });
-
+    nodes.forEach(n=>{const pr=n.r+Math.sin(n.p)*0.5;ctx.beginPath();ctx.arc(n.x,n.y,pr,0,Math.PI*2);ctx.fillStyle='rgba(212,245,60,0.7)';ctx.fill();});
     requestAnimationFrame(draw);
   }
   draw();
 }
 
-// LIVE STATS
-let tx=2891;
-setInterval(()=>{
-  tx+=Math.floor(Math.random()*4)+1;
-  const el=document.getElementById('txLive');
-  if(el) el.textContent=tx.toLocaleString();
-},2800);
+let txC=2891,nodeN=1247;
+setInterval(()=>{txC+=Math.floor(Math.random()*4)+1;const el=document.getElementById('txToday');if(el)el.textContent=txC.toLocaleString('fr-FR');},3000);
+setInterval(()=>{if(Math.random()>0.7){nodeN++;const el=document.getElementById('nodeCount');if(el)el.textContent=nodeN.toLocaleString('fr-FR');}},8000);
 
-// ACTIVITY FEED
 const acts=[
-  ['VortexLabs','rented H100 · 24h','€43.20'],
-  ['NexaKernel','new provider joined','Dubai'],
-  ['AI_Startup_SG','purchased 8h compute','€14.40'],
-  ['OmniCompute','completed 48h job','€31.20'],
-  ['SynapseNet','sold H100 NVL · 12h','€25.20'],
-  ['DataxCore','rented RTX 4080','€1.76'],
-  ['NewNode_AE','went online','1,248 nodes'],
-  ['QuantumNode','job completed','€5.70'],
+  ['VortexLabs','a loué H100 · 24h','+€43.20'],['NexaKernel','nouveau fournisseur','Singapour'],
+  ['AI_Startup_FR','a acheté 8h de calcul','+€14.40'],['OmniCompute','job terminé · 48h','+€31.20'],
+  ['SynapseNet','H100 NVL · 12h loué','+€25.20'],['DataxCore','RTX 4080 en ligne','Dubaï'],
+  ['NewNode_BE','rejoint le réseau','1,248 nœuds'],['QuantumNode','job complété','+€5.70'],
 ];
-
 const feed=document.getElementById('activity');
 function addAct(){
   const a=acts[Math.floor(Math.random()*acts.length)];
-  const el=document.createElement('div');
-  el.className='act-item';
-  el.innerHTML=`<b>${a[0]}</b> — ${a[1]} <b style="color:#0f0e0c">${a[2]}</b>`;
+  const el=document.createElement('div');el.className='act-item';
+  el.innerHTML=`<b>${a[0]}</b> — ${a[1]} <span class="amt">${a[2]}</span>`;
   feed.appendChild(el);
-  setTimeout(()=>{ if(feed.contains(el)) feed.removeChild(el); },5200);
-  if(feed.children.length>3) feed.removeChild(feed.firstChild);
+  setTimeout(()=>{if(feed.contains(el))feed.removeChild(el);},5200);
+  if(feed.children.length>3)feed.removeChild(feed.firstChild);
 }
-setTimeout(()=>{ addAct(); setInterval(addAct,3800); },1500);
+setTimeout(()=>{addAct();setInterval(addAct,3600);},2000);
 </script>
 </body>
 </html>
