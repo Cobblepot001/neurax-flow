@@ -72,16 +72,16 @@ h1 .strike::after { content: ''; position: absolute; left: 0; right: 0; top: 50%
 .hero-right { background: var(--dark); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 48px; }
 canvas#qnet { position: absolute; inset: 0; opacity: 0.55; }
 .power-panel { position: relative; z-index: 2; width: 100%; }
-.pp-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
-.pp-title::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+.pp-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.6); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
+.pp-title::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.15); }
 .power-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(52px,6vw,80px); letter-spacing: -4px; color: var(--accent); line-height: 1; display: block; }
-.power-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; margin-bottom: 36px; }
+.power-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; margin-bottom: 36px; }
 .pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.06); margin-bottom: 28px; }
 .pcell { background: rgba(255,255,255,0.03); padding: 18px 16px; }
 .pcell-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -1px; color: white; margin-bottom: 4px; }
 .pcell-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; }
 .advs { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; display: flex; flex-direction: column; gap: 12px; }
-.adv { display: flex; align-items: center; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.45); }
+.adv { display: flex; align-items: center; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.7); }
 .adv-ic { width: 28px; height: 28px; background: rgba(212,245,60,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
 .adv strong { color: rgba(255,255,255,0.82); font-weight: 500; }
 
@@ -109,7 +109,18 @@ h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px,4v
 .manifesto-section p { font-size: 17px; font-weight: 300; color: var(--ink2); line-height: 1.8; margin-bottom: 16px; }
 .manifesto-section p strong { color: var(--ink); font-weight: 500; }
 
-.comparison { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.comparison { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+.cf-title { font-size: 15px; color: var(--ink); font-weight: 500; margin-bottom: 3px; }
+.cf-sub { font-family: "JetBrains Mono", monospace; font-size: 9px; color: var(--muted); }
+.comp-val-good { font-family: "Syne", sans-serif; font-weight: 800; font-size: 18px; color: #16a34a; letter-spacing: -0.5px; margin-bottom: 3px; }
+.comp-val-bad { font-family: "Syne", sans-serif; font-weight: 700; font-size: 16px; color: #dc2626; margin-bottom: 3px; }
+.comp-sub-good { font-family: "JetBrains Mono", monospace; font-size: 9px; color: #16a34a; opacity: 0.8; }
+.comp-sub-bad { font-family: "JetBrains Mono", monospace; font-size: 9px; color: #dc2626; opacity: 0.7; }
+.highlight-row { background: rgba(212,245,60,0.05) !important; border-left: 3px solid var(--accent); }
+.comp-footer { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: var(--bg2); border-top: 1px solid var(--border); }
+.comp-footer-left { font-family: "JetBrains Mono", monospace; font-size: 8px; color: var(--muted); }
+.comp-footer-right { font-family: "Syne", sans-serif; font-weight: 700; font-size: 14px; color: var(--ink); }
+.comp-footer-right strong { color: #16a34a; }
 .comp-header { display: grid; grid-template-columns: 2fr 1fr 1fr; background: var(--ink); padding: 16px 24px; gap: 16px; }
 .comp-header span { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
 .comp-header span:first-child { color: rgba(255,255,255,0.3); }
